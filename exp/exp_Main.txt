@@ -1,0 +1,8 @@
+Pendu:
+
+-Liste des different page:
+-les regle (par defaut)
+-le jeu
+
+-Chaque page aura acces aux autre
+

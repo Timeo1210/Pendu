@@ -1,0 +1,55 @@
+body {
+    background-color: white;
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+}
+
+h1 {
+  color: black;
+  font-size: 42px;
+  font-weight: 600px;
+  text-align: center;
+}
+
+td {
+    padding: 15px;
+}
+
+table {
+    border-spacing: 1px;
+}
+
+.content {
+    margin-bottom: 75px;
+}
+
+.content h1 {
+    border: 3px solid black;
+    position: relative;
+    top: 50px;
+    width: 400px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.cell_list_allParty {
+    border: 1px black solid;
+    spacing: 100;
+}
+
+
+.list_allParty {
+    margin: 0 auto;
+    border: 1px black solid;
+}
+
+#little_p {
+    display: inline-block;
+    border-bottom: 1px solid LightGrey;
+    border-top: 1px solid LightGrey;
+    color: DarkGrey;
+    font-size: 14px;
+    font-weight: 200;
+    margin-bottom: 60px;
+    margin-top: 5px;
+}

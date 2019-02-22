@@ -1,0 +1,12 @@
+tableau allParty:
+[
+['#id', ['#nom1', '#nom2'], '#nomParty','#mot', '#lettre'],
+['#id', ['#nom1', '#nom2'], '#nomParty','#mot', '#lettre']
+...
+]
+
+allParty_id:
+[
+['#nomParty', '#this.numberOfPlayer', '#id'],
+['#nomParty2', '#this.numberOfPlayer', '#id2']
+]

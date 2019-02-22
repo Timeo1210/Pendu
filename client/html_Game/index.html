@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Pendu !</title>
+        <link rel="stylesheet" href="client/html_Game/stylesheet.css">
+    </head>
+    <body>
+        <span id="Init">
+            <div class="content">
+                <h1>Prêt à jouer ?</h1>
+            </div>
+
+            <div class="join">
+                <h2>Entrer l'ID de la party de votre ami</h2>
+                <input type="text" id="input_sessionID">
+                <button type="button">Rejoindre</button>
+            </div>
+
+            <div class="recherchParty">
+                <h2>Ou rechercher parmie la liste des partie:</h2>
+                <span id="little_p">Clique sur le nom de la partie désirée</span>
+                <span id="list_allParty">
+
+                </span>
+            </div>
+
+        </span>
+
+
+
+
+        <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+        <script src="client/html_Game/main.js"></script>
+    </body>
+</html>
