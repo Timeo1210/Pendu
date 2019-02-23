@@ -11,10 +11,16 @@
                 <h1>Prêt à jouer ?</h1>
             </div>
 
+            <div class="nameofuser">
+                <h2>Tous D'abors entrer votre nom</h2>
+                <input type="text" id="input_nameofuser">
+            </div>
+
             <div class="join">
                 <h2>Entrer l'ID de la party de votre ami</h2>
                 <input type="text" id="input_sessionID">
-                <button type="button">Rejoindre</button>
+                <button type="button" onclick="JoinThis(document.getElementById('input_sessionID').value)">Rejoindre</button>
+                <p id="ERROR_001" style="color: red"></p>
             </div>
 
             <div class="recherchParty">
@@ -23,6 +29,13 @@
                 <span id="list_allParty">
 
                 </span>
+            </div>
+
+            <div class="creatParty">
+                <h2 id="h2_createparty">Vous pouvez aussi créer une partie:</h2>
+                <span id="little_p">Entrer le nom que vous voulez pour votre partie</span> <br>
+                <input type="text" id="input_nameofpartie">
+                <button type="button" onclick="CreateParty()">Créer la partie</button>
             </div>
 
         </span>

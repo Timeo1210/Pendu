@@ -1,0 +1,2 @@
+Liste error:
+ERROR_001: error lors de la recherche de la party (output: party inexistante)

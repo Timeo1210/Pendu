@@ -27,7 +27,43 @@ function Aff_allParty_id() {
             tr.appendChild(td)
             td.innerHTML = allParty_id[j][i];
             td.className = 'cell_list_allParty'
+            if (j !== 0) {
+                td.setAttribute("onclick", function(){var row = j - 1; JoinThis(allParty_id[row][2])})
+                td.onclick = function(){var row = j - 1; JoinThis(allParty_id[row][2])}
+            }
         }
     }
     allParty_id.shift()
 }
+
+function JoinThis(id) {
+    socket.emit('newuserjoin', {
+        id: id,
+        name: document.getElementById('input_nameofuser').value
+    })
+}
+
+function CreateParty() {
+    let name = document.getElementById('input_nameofpartie').value
+    socket.emit('newpartie', name);
+}
+
+
+
+
+
+socket.on('ERROR_001', function() {
+    function ANIM_ERROR_001() {
+    function afterAnim() {
+        document.getElementById('ERROR_001').style.animation = 'fadeOut 1s'
+    }
+    function endAnim() {
+        document.getElementById('ERROR_001').innerHTML = ''
+    }
+    document.getElementById('ERROR_001').innerHTML = "Partie Inexistante";
+    document.getElementById('ERROR_001').style.animation = 'fadeIn 1s'
+    setTimeout(afterAnim, 900)
+    setTimeout(endAnim, 1900)
+}
+    ANIM_ERROR_001()
+})
