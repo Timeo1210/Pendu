@@ -10,38 +10,49 @@
             <div class="content">
                 <h1>Prêt à jouer ?</h1>
             </div>
+            <span id="Init_before_name">
+                <div>
+                    <h2>Tous D'abors entrer votre nom</h2>
+                    <input type="text" id="input_nameofuser" onchange="document.getElementById('Init_after_name').style.display = 'block';">
+                </div>
+            </span>
+            <span id="Init_after_name">
+                <div>
+                    <h2>Entrer l'ID de la party de votre ami</h2>
+                    <input type="text" id="input_sessionID">
+                    <button type="button" onclick="JoinThis(document.getElementById('input_sessionID').value)">Rejoindre</button>
+                    <p id="ERROR_001" style="color: red"></p>
+                </div>
 
-            <div class="nameofuser">
-                <h2>Tous D'abors entrer votre nom</h2>
-                <input type="text" id="input_nameofuser" onchange="AFF_join_recherchParty_creatParty">
-            </div>
+                <div>
+                    <h2>Ou rechercher parmie la liste des partie:</h2>
+                    <span id="little_p">Clique sur le nom de la partie désirée</span>
+                    <span id="list_allParty">
 
-            <div class="join">
-                <h2>Entrer l'ID de la party de votre ami</h2>
-                <input type="text" id="input_sessionID">
-                <button type="button" onclick="JoinThis(document.getElementById('input_sessionID').value)">Rejoindre</button>
-                <p id="ERROR_001" style="color: red"></p>
-            </div>
+                    </span>
+                </div>
 
-            <div class="recherchParty">
-                <h2>Ou rechercher parmie la liste des partie:</h2>
-                <span id="little_p">Clique sur le nom de la partie désirée</span>
-                <span id="list_allParty">
-
-                </span>
-            </div>
-
-            <div class="creatParty">
-                <h2 id="h2_createparty">Vous pouvez aussi créer une partie:</h2>
-                <span id="little_p">Entrer le nom que vous voulez pour votre partie</span> <br>
-                <input type="text" id="input_nameofpartie">
-                <button type="button" onclick="CreateParty()">Créer la partie</button>
-            </div>
-
+                <div>
+                    <h2 id="h2_createparty">Vous pouvez aussi créer une partie:</h2>
+                    <span id="little_p">Entrer le nom que vous voulez pour votre partie</span> <br>
+                    <input type="text" id="input_nameofpartie">
+                    <button type="button" onclick="CreateParty()" style="margin-bottom: 50px;">Créer la partie</button>
+                </div>
+            </span>
         </span>
 
+        <span id="wtgPlayer">
+            <h2>Liste des joueur présents dans la partie:</h2>
+            <span id="div_list_players">
 
+            </span>
 
+            <div class="startGame">
+                <p id="p_admin_output" style="margin-top: 25px; margin-bottom: 10px;"></p>
+                <p id="p_adminWait" style="margin: 5px 0px 5px"></p>
+                <button type="button" onclick="StartGame()" id="btn_startGame" disabled>Commencer</button>
+            </div>
+        </span>
 
         <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
         <script src="client/html_Game/main.js"></script>
