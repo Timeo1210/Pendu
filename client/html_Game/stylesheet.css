@@ -47,6 +47,10 @@ table {
     spacing: 100;
 }
 
+.cell_Red {
+    background-color: red;
+}
+
 
 .list_allParty {
     margin: 0 auto;

@@ -54,6 +54,38 @@
             </div>
         </span>
 
+        <span id="wordChoose">
+            <h2>En attente du mot</h2>
+            <span id="wordChoose_true" style="display: none;">
+                <p class="p_gray">Veuillez entrée le mot pour le pendu</p>
+                <input type="text" id="input_word_Pendu">
+                <button type="button" onclick="NewWord()">Valider</button>
+            </span>
+        </span>
+
+        <span id="Pendu">
+            <div>
+                <span id="span_word_AFF">
+
+                </span>
+            </div>
+
+            <div>
+                <p id="#little_p">Cliquer sur une des lettres pour choisire votre lettre</p>
+                <span id="span_alphabet_AFF">
+
+                </span>
+            </div>
+
+            <div>
+                <span id="span_mistake_AFF">
+
+                </span>
+                <p id="p_endOutput"></p>
+                <button type="button" disabled id="bnt_nextParty" onclick="NextParty()">Nouvelle Partie</button>
+            </div>
+        </span>
+
         <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
         <script src="client/html_Game/main.js"></script>
     </body>
