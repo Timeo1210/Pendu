@@ -10,7 +10,6 @@
   "author": "Timeo Boulhol",
   "license": "ISC",
   "dependencies": {
-    "crypto": "^1.0.1",
     "socket.io": "^2.2.0"
   }
 }

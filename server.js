@@ -1,7 +1,6 @@
- var express = require('express');
+var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
-var crypto = require('crypto');
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/client/html_Regle/index.html');
