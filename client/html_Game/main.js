@@ -32,7 +32,7 @@ socket.on('infoMyParty', function(data) {
     document.getElementById('Init').style.display = 'none';
     document.getElementById('wtgPlayer').style.display = 'block';
     //check admin
-    if (data.myId === data.admin) {
+    if (socket.id === data.admin) {
         admin = true
     }
     //display players
@@ -117,11 +117,18 @@ socket.on('mistakeLetter', function(data) {
     AffMistake(data)
 })
 
+socket.on('newAdmin', function(data) {
+    if (data === socket.id) {
+        admin = true
+    }
+})
+
 
 socket.on('letterTurn', function(data) {
     if (data === socket.id) {
         letterTurn = true
     }
+    AffWhoChose()
 })
 
 socket.on('partyEnd_Lose', function(data) {
@@ -252,6 +259,18 @@ function LetterChoice(letter) {
             index: indexParty,
             letter: letter
         })
+    }
+}
+
+function AffWhoChose() {
+    if (letterTurn === true) {
+        document.getElementById('aff_whoChoose').innerHTML = ''
+        document.getElementById('aff_whoChoose').innerHTML = "C'est a vous de choisir"
+        document.getElementById('aff_whoChoose').className = 'p_green'
+    } else {
+        document.getElementById('aff_whoChoose').innerHTML = ''
+        document.getElementById('aff_whoChoose').innerHTML = "Ce n'est pas a vous de choisir"
+        document.getElementById('aff_whoChoose').className = 'p_red'
     }
 }
 

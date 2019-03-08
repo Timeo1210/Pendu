@@ -57,6 +57,13 @@ table {
     border: 1px black solid;
 }
 
+.p_green {
+    color: green;
+}
+.p_red {
+    color: red;
+}
+
 
 #little_p {
     display: inline-block;

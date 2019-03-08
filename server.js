@@ -86,12 +86,7 @@ io.sockets.on('connection', function(socket){
         UserJoin(socket.id, data.name)
     })
 
-    socket.on('getWordTurn', function(data) {
-        //Reset
-        allParty[data][5] = ''
-        allParty[data][7][0] = []
-        allParty[data][7][1] = []
-        allParty[data][8] = 0
+    function getWordTurn(data) {
         if (allParty[data][3] === -1) {
             allParty[data][6] = true
             RefreshAll()
@@ -102,11 +97,19 @@ io.sockets.on('connection', function(socket){
             allParty[data][3]++
         }
         io.in(allParty[data][0]).emit('wordTurn', allParty[data][1][allParty[data][3]][1])
+    }
+    socket.on('getWordTurn', function(data) {
+        //Reset
+        allParty[data][5] = ''
+        allParty[data][7][0] = []
+        allParty[data][7][1] = []
+        allParty[data][8] = 0
+        getWordTurn(data)
     })
 
     function LetterTurn(index) {
         function AddCondition() {
-            if (allParty[index][4] === allParty[index][1].length - 1) {
+            if (allParty[index][4] >= allParty[index][1].length - 1) {
                 allParty[index][4] = 0
             } else {
                 allParty[index][4]++
@@ -126,7 +129,7 @@ io.sockets.on('connection', function(socket){
             }
         }
         for (let i = 0; i < word.length; i++) {
-            if (word[i] === word[0] || word[i] === word[word.length - 1]) {
+            if (word[i].toLowerCase() === word[0].toLowerCase() || word[i].toLowerCase() === word[word.length - 1].toLowerCase()) {
                 allParty[index][7][0].splice(i, 1, word[i])
             } else if (word[i].toLowerCase() === letter.toLowerCase()) {
                 allParty[index][7][0].splice(i, 1, word[i])
@@ -156,11 +159,12 @@ io.sockets.on('connection', function(socket){
     function newLetterChoice(index, word, letter) {
         WordProcess(word, letter, index)
         if (allParty[index][8] !== 8) {
+            io.in(allParty[index][0]).emit('letterTurn', LetterTurn(index))
+
             io.in(allParty[index][0]).emit('wordProcess', {
                 word: allParty[index][7][0],
                 letter: allParty[index][7][1]
             })
-            io.in(allParty[index][0]).emit('letterTurn', LetterTurn(index))
         }
     }
     socket.on('wordIs', function(data) {
@@ -176,19 +180,74 @@ io.sockets.on('connection', function(socket){
         get_allParty_id(true)
     }
 
+    //Not Optimise
+    function CheckForStatus(id, index, user) {
+        //io.in(allParty[index][0]).emit('letterTurn', LetterTurn(index))
+
+        //NOBODY
+        if (allParty[index][1].length === 2) {
+            io.in(allParty[index][0]).emit('ERROR_002')
+            allParty.splice(index, 1)
+            return;
+        }
+        //NOTSTART
+        if (allParty[index][6] === false) {
+            allParty[index][1].splice(user, 1)
+            let rdmId = 'NONE'
+            let players = [[], []]
+            allParty[index][1].forEach(function(elm) {
+                players[1].push(elm[0])
+            })
+
+            io.in(allParty[index][0]).emit('infoMyParty', {
+                myId: rdmId,
+                index: index,
+                players: players,
+                admin: allParty[index][1][0][1]
+            })
+
+            RefreshAll()
+            return;
+        }
+        //ADMIN
+        if (allParty[index][1][0][1] === allParty[index][1][user][1]) {
+            if (typeof allParty[index][1][user] !== 'undefined' &&  allParty[index][1][user][1] === id) {
+                allParty[index][1].splice(user, 1)
+            }
+            io.in(allParty[index][0]).emit('newAdmin', allParty[index][1][0][1])
+
+
+            //LetterTurn
+        } else if (allParty[index][4] === user) {
+            if (typeof allParty[index][1][user] !== 'undefined' &&  allParty[index][1][user][1] === id) {
+                allParty[index][1].splice(user, 1)
+            }
+            io.in(allParty[index][0]).emit('letterTurn', LetterTurn(index))
+            return;
+
+            //WordTurn
+        }
+
+        //WordTurn
+        if (allParty[index][3] === user) {
+            if (typeof allParty[index][1][user] !== 'undefined' &&  allParty[index][1][user][1] === id) {
+                allParty[index][1].splice(user, 1)
+            }
+
+            allParty[index][5] = ''
+            allParty[index][7][0] = []
+            allParty[index][7][1] = []
+            allParty[index][8] = 0
+
+            getWordTurn(index);
+        }
+    }
+
     socket.on('disconnect', function() {
         for (let j = 0; j < allParty.length; j++) {
             for (let i = 0; i < allParty[j][1].length; i++) {
                 if (allParty[j][1][i][1] === socket.id) {
-                    //admin leave
-                    if (i === 0) {
-                        io.in(allParty[j][0]).emit('ERROR_002')
-                        allParty.splice(j, 1)
-                    } else {
-                        //PROVISOIRE QUAND QUELQU4UN QUITTE LA PARTY S'ARRETE
-                        io.in(allParty[j][0]).emit('ERROR_002')
-                        allParty.splice(j, 1)
-                    }
+                    CheckForStatus(socket.id, j, i)
 
                     RefreshAll()
                     return;
