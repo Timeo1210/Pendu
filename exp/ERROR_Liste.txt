@@ -1,3 +1,5 @@
 Liste error:
 ERROR_001: error lors de la recherche de la party (output: party inexistante)
 ERROR_002: error l'admin a quitter (output: party terminer)
+ERROR_003: vous êtes ban
+ERROR_004: vous ne pôuvez pas ecrire de mot

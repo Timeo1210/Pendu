@@ -11,6 +11,9 @@ app.get('/Pendu', function(req, res) {
 app.get('/ERROR_002', function(req, res) {
     res.sendFile(__dirname + '/client/ERROR/ERROR_002/index.html');
 })
+app.get('/ERROR_003', function(req, res) {
+    res.sendFile(__dirname + '/client/ERROR/ERROR_003/index.html');
+})
 
 app.use('/client',express.static(__dirname + '/client'));
 
@@ -19,11 +22,13 @@ var port = process.env.PORT || 8080;
 serv.listen(port, function() {
     console.log('[+] Server Started')
 });
-
+/*
 var allParty = [
     ['id1', [['joueur1', 'IDofjoueur1'], ['joueur2', 'IDofjoueur2']], 'LapartyX', -1, -1, '', false, [[], []], 0],
     ['id2', [['joueur1', 'IDofjoueur1'], ['joueur2', 'IDofjoueur2']], 'LapartyX', -1, -1, '', false, [[], []], 0]
 ]
+*/
+var allParty = []
 
 var someName = ['Aple', 'Rat', 'Jimmy', 'Solomon', 'Rita']
 
@@ -55,22 +60,26 @@ io.sockets.on('connection', function(socket){
 
             socket.join(id)
             for (let j = 0; j < allParty.length; j++) {
-                if (allParty[j][0] === id && allParty[j][6] === false) {
-                    let rdmId = socket.id;
-                    allParty[j][1].push([name, rdmId])
-                    let players = [[], []]
-                    allParty[j][1].forEach(function(elm) {
-                        players[1].push(elm[0])
-                    })
+                if (allParty[j][0] === id) {
+                    if (allParty[j][6] === false) {
+                        let rdmId = socket.id;
+                        allParty[j][1].push([name, rdmId])
+                        let players = [[], []]
+                        allParty[j][1].forEach(function(elm) {
+                            players[1].push(elm[0])
+                        })
 
-                    io.in(id).emit('infoMyParty', {
-                        myId: rdmId,
-                        index: j,
-                        players: players,
-                        admin: allParty[j][1][0][1]
-                    })
+                        io.in(id).emit('infoMyParty', {
+                            myId: rdmId,
+                            index: j,
+                            players: players,
+                            admin: allParty[j][1][0][1]
+                        })
 
-                    RefreshAll()
+                        RefreshAll()
+                    } else {
+                        socket.emit('ERROR_001')
+                    }
                 }
             }
         } else {
@@ -82,7 +91,7 @@ io.sockets.on('connection', function(socket){
     })
 
     socket.on('newpartie', function(data) {
-        allParty.push([socket.id, [], data.nameParty, -1, -1, '', false, [[], []], 0])
+        allParty.push([socket.id, [], data.nameParty, -1, -1, '', false, [[], []], 0, []])
         UserJoin(socket.id, data.name)
     })
 
@@ -97,6 +106,7 @@ io.sockets.on('connection', function(socket){
             allParty[data][3]++
         }
         io.in(allParty[data][0]).emit('wordTurn', allParty[data][1][allParty[data][3]][1])
+        allParty[data][9].push(allParty[data][1][allParty[data][3]][1])
     }
     socket.on('getWordTurn', function(data) {
         //Reset
@@ -104,6 +114,7 @@ io.sockets.on('connection', function(socket){
         allParty[data][7][0] = []
         allParty[data][7][1] = []
         allParty[data][8] = 0
+        allParty[data][9] = []
         getWordTurn(data)
     })
 
@@ -116,8 +127,18 @@ io.sockets.on('connection', function(socket){
             }
         }
         AddCondition()
-        if (allParty[index][4] === allParty[index][3]) {
+        //allParty[index][4] === allParty[index][3]
+        let count = 0
+        while (((allParty[index][4] === allParty[index][3]) || (allParty[index][9].some(elem => elem === allParty[index][1][allParty[index][4]][1]) === true)) && (count < allParty[index][1].length)) {
+            count++
             AddCondition()
+        }
+        if (count === allParty[index][1].length) {
+            io.in(allParty[index][0]).emit('partyEnd', {
+                id: allParty[index][1][allParty[index][3]][1],
+                word: allParty[index][5]
+            })
+            return
         }
         return allParty[index][1][allParty[index][4]][1]
     }
@@ -142,16 +163,24 @@ io.sockets.on('connection', function(socket){
                 allParty[index][7][0].splice(i, 1, "'")
             }
         }
+        //WIN
         if (allParty[index][7][0].some(elem => elem === '_') !== true && allParty[index][8] !== 8) {
-            io.in(allParty[index][0]).emit('partyEnd_Win')
+            io.in(allParty[index][0]).emit('partyEnd', {
+                id: socket.id,
+                word: allParty[index][5]
+            })
         }
+        //LOSE
         if (letter !== 'NONE' && error === true) {
             allParty[index][7][1].push(letter)
             allParty[index][8]++
             io.in(allParty[index][0]).emit('mistakeLetter', allParty[index][8])
             //error count
             if (allParty[index][8] === 8) {
-                io.in(allParty[index][0]).emit('partyEnd_Lose', allParty[index][5])
+                io.in(allParty[index][0]).emit('partyEnd', {
+                    id: allParty[index][1][allParty[index][3]][1],
+                    word: allParty[index][5]
+                })
             }
         }
         //To Win Or Death
@@ -174,6 +203,40 @@ io.sockets.on('connection', function(socket){
 
     socket.on('newLetterChoice', function(data) {
         newLetterChoice(data.index, allParty[data.index][5], data.letter)
+    })
+
+    socket.on('suggestedWord', function(data) {
+        if (allParty[data.index][9].some(elem => elem === data.id) !== true) {
+            allParty[data.index][9].push(data.id)
+            if (data.suggWord.toLowerCase() === allParty[data.index][5].toLowerCase()) {
+                io.in(allParty[data.index][0]).emit('partyEnd', {
+                    id: socket.id,
+                    word: allParty[data.index][5]
+                })
+            } else {
+                socket.emit('yourDead')
+            }
+        } else {
+            socket.emit('ERROR_004')
+        }
+    })
+
+    function randomNumber(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+    function banPlayer(id, index) {
+        io.in(allParty[index][0]).emit('ERROR_003', id)
+    }
+    socket.on('banRdm', function(data) {
+        if (randomNumber(2) === 0) {
+            banPlayer(socket.id, data.index);
+        } else {
+            let rdmNumber = randomNumber(allParty[data.index][1].length)
+            while (allParty[data.index][1][rdmNumber][1] === data.id) {
+                rdmNumber = randomNumber(allParty[data.index][1].length)
+            }
+            banPlayer(allParty[data.index][1][rdmNumber][1], data.index)
+        }
     })
 
     function RefreshAll() {
@@ -214,7 +277,9 @@ io.sockets.on('connection', function(socket){
             if (typeof allParty[index][1][user] !== 'undefined' &&  allParty[index][1][user][1] === id) {
                 allParty[index][1].splice(user, 1)
             }
-            io.in(allParty[index][0]).emit('newAdmin', allParty[index][1][0][1])
+            if (allParty[index][1].length !== 0) {
+                io.in(allParty[index][0]).emit('newAdmin', allParty[index][1][0][1])
+            }
 
 
             //LetterTurn

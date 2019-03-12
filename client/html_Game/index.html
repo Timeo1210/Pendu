@@ -82,8 +82,17 @@
                 <span id="span_mistake_AFF">
 
                 </span>
+                <p>Vous avez trouver le mot ?</p>
+                <input type="text" id="input_wordFind" onchange="SuggestWord(this.value)">
+                <p id="ERROR_004"></p>
                 <p id="p_endOutput"></p>
                 <button type="button" disabled id="bnt_nextParty" onclick="NextParty()">Nouvelle Partie</button>
+            </div>
+
+            <div>
+                <br>
+                <button type="button" onclick="BanRandomPlayer()" id="btn_banPlayer">Bannir un FDP</button>
+                <p id="ERROR_003"></p>
             </div>
         </span>
 

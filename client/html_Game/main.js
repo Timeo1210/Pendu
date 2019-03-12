@@ -15,6 +15,7 @@ var alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
 var letterTurn = false
 var mistakeAffInit = false
 var partyEnd = false
+var alreadyBan = false
 
 socket.emit('get_allParty_id')
 
@@ -131,21 +132,35 @@ socket.on('letterTurn', function(data) {
     AffWhoChose()
 })
 
-socket.on('partyEnd_Lose', function(data) {
+socket.on('partyEnd', function(data) {
     partyEnd = true;
     AffWord(data)
-    document.getElementById('p_endOutput').innerHTML = 'Vous avez Perdu !'
+    if (typeof data.id !== 'undefined' && data.id === socket.id) {
+        document.getElementById('p_endOutput').innerHTML = ''
+        document.getElementById('p_endOutput').innerHTML = 'Vous avez Gagnez !'
+    } else {
+        document.getElementById('p_endOutput').innerHTML = ''
+        document.getElementById('p_endOutput').innerHTML = 'Vous avez Perdu !'
+    }
     if (admin === true) {
         document.getElementById('bnt_nextParty').disabled = false
     }
 })
 
-socket.on('partyEnd_Win', function() {
+socket.on('yourDead', function() {
     partyEnd = true
-    document.getElementById('p_endOutput').innerHTML = 'Vous avez Gagnez !'
-    if (admin === true) {
-        document.getElementById('bnt_nextParty').disabled = false
-    }
+    letterTurn = false
+
+    document.getElementById('p_endOutput').innerHTML = 'Vous Avez Perdu !'
+
+    socket.emit('newLetterChoice', {
+        index: indexParty,
+        letter: 'NONE'
+    })
+
+    document.getElementById('aff_whoChoose').innerHTML = ''
+    document.getElementById('aff_whoChoose').innerHTML = "Ce n'est pas a vous de choisir"
+    document.getElementById('aff_whoChoose').className = 'p_red'
 })
 
 function Aff_allParty_id() {
@@ -156,7 +171,6 @@ function Aff_allParty_id() {
     tbl.id = 'table_list_allParty';
     tbl.className = 'list_allParty';
 
-    let bool_do = true
     for (let j = 0; j < allParty_id.length; j++) {
         var tr = document.createElement('tr')
         tbl.appendChild(tr)
@@ -172,7 +186,7 @@ function Aff_allParty_id() {
 
                 td.innerHTML = allParty_id[j][i];
 
-                if (j !== 0) {
+                if (j !== 0 && allParty_id[j][allParty_id.length - 1] !== true) {
                     td.setAttribute("onclick", function(){var row = j - 1; JoinThis(allParty_id[row][2])})
                     td.onclick = function(){var row = j - 1; JoinThis(allParty_id[row][2])}
                 }
@@ -300,25 +314,55 @@ function NextParty() {
     socket.emit('getWordTurn', indexParty)
 }
 
+function BanRandomPlayer() {
+    if (alreadyBan === false) {
+        alreadyBan = true
+        document.getElementById('btn_banPlayer').disabled = true
+        socket.emit('banRdm', {
+            index: indexParty,
+            id: socket.id
+        })
+    } else {
+        ANIM_ERROR('ERROR_003', "Vous avez déjà bannie quelqu'un")
+    }
+}
+
+function SuggestWord(suggWord) {
+    document.getElementById('input_wordFind').value = ""
+    socket.emit('suggestedWord', {
+        index: indexParty,
+        id: socket.id,
+        suggWord: suggWord
+    })
+}
 
 
 
+
+function ANIM_ERROR(id, text) {
+function afterAnim() {
+    document.getElementById(id).style.animation = 'fadeOut 1s'
+}
+function endAnim() {
+    document.getElementById(id).innerHTML = ''
+}
+document.getElementById(id).innerHTML = text;
+document.getElementById(id).style.animation = 'fadeIn 1s'
+setTimeout(afterAnim, 900)
+setTimeout(endAnim, 1900)
+}
 
 socket.on('ERROR_001', function() {
-    function ANIM_ERROR_001() {
-    function afterAnim() {
-        document.getElementById('ERROR_001').style.animation = 'fadeOut 1s'
-    }
-    function endAnim() {
-        document.getElementById('ERROR_001').innerHTML = ''
-    }
-    document.getElementById('ERROR_001').innerHTML = "Partie inexistante ou en cours";
-    document.getElementById('ERROR_001').style.animation = 'fadeIn 1s'
-    setTimeout(afterAnim, 900)
-    setTimeout(endAnim, 1900)
-}
-    ANIM_ERROR_001()
+    ANIM_ERROR('ERROR_001', 'Partie inexistante ou en cours')
 })
 socket.on('ERROR_002', function() {
     window.location = window.location.origin + '/ERROR_002';
+})
+socket.on('ERROR_003', function(data) {
+    if (data === socket.id) {
+        window.location = window.location.origin + '/ERROR_003';
+    }
+})
+socket.on('ERROR_004', function() {
+    ANIM_ERROR('ERROR_004', "Vous n'êtes pas authoriser a écrire de mot")
 })
