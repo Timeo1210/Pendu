@@ -16,6 +16,7 @@ var letterTurn = false
 var mistakeAffInit = false
 var partyEnd = false
 var alreadyBan = false
+var tab_aff_pendu = ['img_pendu0.png', 'img_pendu1.png', 'img_pendu2.png', 'img_pendu3.png', 'img_pendu4.png', 'img_pendu5.png', 'img_pendu6.png', 'img_pendu7.png', 'img_pendu8.png']
 
 socket.emit('get_allParty_id')
 
@@ -137,9 +138,11 @@ socket.on('partyEnd', function(data) {
     AffWord(data)
     if (typeof data.id !== 'undefined' && data.id === socket.id) {
         document.getElementById('p_endOutput').innerHTML = ''
+        document.getElementById('p_endOutput').style.color = 'red'
         document.getElementById('p_endOutput').innerHTML = 'Vous avez Gagnez !'
     } else {
         document.getElementById('p_endOutput').innerHTML = ''
+        document.getElementById('p_endOutput').style.color = 'green'
         document.getElementById('p_endOutput').innerHTML = 'Vous avez Perdu !'
     }
     if (admin === true) {
@@ -151,6 +154,7 @@ socket.on('yourDead', function() {
     partyEnd = true
     letterTurn = false
 
+    document.getElementById('p_endOutput').style.color = 'red'
     document.getElementById('p_endOutput').innerHTML = 'Vous Avez Perdu !'
 
     socket.emit('newLetterChoice', {
@@ -289,25 +293,7 @@ function AffWhoChose() {
 }
 
 function AffMistake(nbr_mistake) {
-    let tab_mistake = []
-    for (let i = 0; i < nbr_mistake; i++) {
-        tab_mistake.push('X')
-    }
-    document.getElementById('span_mistake_AFF').innerHTML = ''
-    var tbl = document.createElement('table')
-    tbl.style.border = '1px black solid'
-    tbl.style.height = '20px'
-    document.getElementById('span_mistake_AFF').appendChild(tbl)
-    var tr = document.createElement('tr')
-    tbl.appendChild(tr)
-    //nuber eroor = 8
-    for (let i = 0; i < 8; i++) {
-        var td = document.createElement('td')
-        tr.appendChild(td)
-        if (tab_mistake[i] === 'X') {
-            td.className = 'cell_Red'
-        }
-    }
+    document.getElementById('div_mistake_AFF').style.backgroundImage = "url(" + "/client/html_game/img/img_pendu/" + tab_aff_pendu[nbr_mistake] + ")";
 }
 
 function NextParty() {
