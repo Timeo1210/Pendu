@@ -138,11 +138,11 @@ socket.on('partyEnd', function(data) {
     AffWord(data)
     if (typeof data.id !== 'undefined' && data.id === socket.id) {
         document.getElementById('p_endOutput').innerHTML = ''
-        document.getElementById('p_endOutput').style.color = 'red'
+        document.getElementById('p_endOutput').style.color = 'green'
         document.getElementById('p_endOutput').innerHTML = 'Vous avez Gagnez !'
     } else {
         document.getElementById('p_endOutput').innerHTML = ''
-        document.getElementById('p_endOutput').style.color = 'green'
+        document.getElementById('p_endOutput').style.color = 'red'
         document.getElementById('p_endOutput').innerHTML = 'Vous avez Perdu !'
     }
     if (admin === true) {
