@@ -293,7 +293,7 @@ function AffWhoChose() {
 }
 
 function AffMistake(nbr_mistake) {
-    document.getElementById('div_mistake_AFF').style.backgroundImage = "url(" + "/client/html_game/img/img_pendu/" + tab_aff_pendu[nbr_mistake] + ")";
+    document.getElementById('div_mistake_AFF').style.backgroundImage = "url(" + window.location.origin + "/client/html_game/img/img_pendu/" + tab_aff_pendu[nbr_mistake] + ")";
 }
 
 function NextParty() {
