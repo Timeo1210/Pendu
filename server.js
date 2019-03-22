@@ -14,6 +14,9 @@ app.get('/ERROR_002', function(req, res) {
 app.get('/ERROR_003', function(req, res) {
     res.sendFile(__dirname + '/client/ERROR/ERROR_003/index.html');
 })
+app.get('/Pendu_img', function(req, res) {
+    res.sendFile(__dirname + '/client/html_Game/img/img_pendu/' + req.query.id)
+})
 
 app.use('/client',express.static(__dirname + '/client'));
 
