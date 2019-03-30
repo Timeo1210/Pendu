@@ -293,11 +293,8 @@ io.sockets.on('connection', function(socket){
     function CheckForStatus(id, index, user) {
         //io.in(allParty[index][0]).emit('letterTurn', LetterTurn(index))
 
-        console.log(allParty[index])
-
         //NOBODY
         if (allParty[index][1].length === 2) {
-            console.log('NOBODY')
             io.in(allParty[index][0]).emit('ERROR_002')
             allParty.splice(index, 1)
             return;
