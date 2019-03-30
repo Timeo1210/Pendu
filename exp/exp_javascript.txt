@@ -1,7 +1,7 @@
 tableau allParty:
-[
-['#id', [['#nom1', #id1], ['#nom2', #id2]], '#nomParty','#wordTurn', '#letterTurn', '#Word', #bool, '#Letter', '#mistake', ['#idDeadPlayer']],
-['#id', ['#nom1', '#nom2'], '#nomParty','#wordTurn', '#letterTurn', '#Word', #bool, '#Letter', '#mistake']
+[²									  4					   8                             10
+['#id', [['#nom1', #id1], ['#nom2', #id2]], '#nomParty','#wordTurn', '#letterTurn', '#Word', #bool, '#Letter', '#mistake', ['#idDeadPlayer'], '#vote'],
+['#id', ['#nom1', '#nom2'], '#nomParty','#wordTurn', '#letterTurn', '#Word', #bool, '#Letter', '#mistake', '#vote']
 ...								     	      ^
 								    	   Game ON ?
 ]

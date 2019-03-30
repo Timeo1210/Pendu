@@ -1,6 +1,6 @@
 body {
-    background-color: white;
-    font-family: 'Raleway', sans-serif;
+    background-color: #483F38;
+    font-family: Roboto, Arial;
     text-align: center;
 }
 
@@ -13,6 +13,7 @@ h1 {
 
 td {
     padding: 15px;
+    font-family: Roboto, Arial;
 }
 
 p {
@@ -23,6 +24,10 @@ p {
 table {
     border-spacing: 1px;
     margin: 0 auto;
+}
+
+input {
+    text-align: center;
 }
 
 .p_grey {
@@ -54,7 +59,6 @@ table {
 
 .list_allParty {
     margin: 0 auto;
-    border: 1px black solid;
 }
 
 .p_green {
@@ -86,6 +90,40 @@ table {
     background: no-repeat;
     height: 250px;
     width: 250px;
+}
+
+#div_img_title {
+    width: 500px;
+    height: 100px;
+    margin: 0px auto;
+    background-image: url(img/img_pendu_title.jpg);
+}
+
+#div_img_player {
+    width: 500px;
+    height: 100px;
+    margin: 0px 50%;
+    background-image: url(img/img_pendu_title.jpg);
+}
+
+#input_nameofuser {
+    border: 2px brown solid;
+    border-radius: 15px;
+    margin-top: 50px;
+    text-align: center;
+    height: 35px;
+    font-size: 15px;
+    font-family: 'courier', Arial;
+}
+
+#div_name {
+    margin: 0px auto;
+    width: 300px;
+    height: 100%;
+}
+
+#Init_after_name {
+    margin-top: 75px;
 }
 
 

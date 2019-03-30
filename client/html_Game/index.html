@@ -7,36 +7,29 @@
     </head>
     <body>
         <span id="Init">
-            <div class="content">
-                <h1>Prêt à jouer ?</h1>
-            </div>
+
+            <img src="client/html_Game/img/img_pendu_title.jpg">
+
             <span id="Init_before_name">
-                <div>
-                    <h2>Tous D'abors entrer votre nom</h2>
-                    <input type="text" id="input_nameofuser" onchange="document.getElementById('Init_after_name').style.display = 'block';">
+                <div id="div_name">
+                    <img src="client/html_Game/img/img_player.jpg" style="float: left; margin: 0 auto;">
+                    <input type="text" id="input_nameofuser" onchange="document.getElementById('Init_after_name').style.display = 'block';" placeholder="Entrer votre nom">
                 </div>
             </span>
             <span id="Init_after_name">
-                <div>
-                    <h2>Entrer l'ID de la party de votre ami</h2>
-                    <input type="text" id="input_sessionID">
-                    <button type="button" onclick="JoinThis(document.getElementById('input_sessionID').value)">Rejoindre</button>
-                    <p id="ERROR_001" style="color: red"></p>
-                </div>
+
 
                 <div>
-                    <h2>Ou rechercher parmie la liste des partie:</h2>
-                    <p id="little_p">Clique sur le nom de la partie désirée</p>
+                    <h2 id="">Salons Actif:</h2>
                     <span id="list_allParty">
 
                     </span>
                 </div>
 
                 <div>
-                    <h2 id="h2_createparty">Vous pouvez aussi créer une partie:</h2>
-                    <span id="little_p">Entrer le nom que vous voulez pour votre partie</span> <br>
-                    <input type="text" id="input_nameofpartie">
-                    <button type="button" onclick="CreateParty()" style="margin-bottom: 50px;">Créer la partie</button>
+                    <h2 id="h2_createparty">Créer un salon</h2>
+                    <input type="text" id="input_nameofpartie" placeholder="Choisissez un nom">
+                    <button type="button" onclick="CreateParty()" style="margin-bottom: 50px;">GO</button>
                 </div>
             </span>
         </span>
@@ -48,9 +41,10 @@
             </span>
 
             <div class="startGame">
-                <p id="p_admin_output" style="margin-top: 25px; margin-bottom: 10px;"></p>
-                <p id="p_adminWait" style="margin: 5px 0px 5px"></p>
-                <button type="button" onclick="StartGame()" id="btn_startGame" disabled>Commencer</button>
+                <!--<p id="p_admin_output" style="margin-top: 25px; margin-bottom: 10px;"></p>
+                <p id="p_adminWait" style="margin: 5px 0px 5px"></p> -->
+                <button type="button" onclick="NewVote('ADD', this.id)" id="btn_startGame"></button>
+                <label for="btn_startGame"> de joueur prêt</label>
             </div>
         </span>
 
@@ -82,12 +76,15 @@
 
             </div>
 
-            <div>
+            <div id="div_find">
                 <p>Vous avez trouver le mot ?</p>
                 <input type="text" id="input_wordFind" onchange="SuggestWord(this.value)">
                 <p id="ERROR_004"></p>
                 <p id="p_endOutput" style=""></p>
-                <button type="button" disabled id="bnt_nextParty" onclick="NextParty()">Nouvelle Partie</button>
+                <span id="span_vote_nextParty">
+
+                </span>
+                <!-- <button type="button" disabled id="bnt_nextParty" onclick="NextParty()">Nouvelle Partie</button> -->
             </div>
 
             <div>

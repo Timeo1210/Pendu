@@ -1,3 +1,7 @@
+String.prototype.replaceAt=function(index, replacement) {
+    return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
+}
+
 var socket = io();
 var allSpan = ['Init', 'Init_after_name','wtgPlayer', 'wordChoose', 'Pendu']
 function InitingAff() {
@@ -65,18 +69,8 @@ socket.on('infoMyParty', function(data) {
         }
     }
     Aff_playerInParty()
-    if (admin === true) {
-        document.getElementById('btn_startGame').disabled = false;
-        document.getElementById('p_admin_output').innerHTML = 'Vous êtes admin.'
 
-        document.getElementById('p_adminWait').innerHTML = 'Appuyer pour commencer la partie avec ces joueurs'
-        document.getElementById('p_adminWait').className = 'p_grey'
-    } else {
-        document.getElementById('p_admin_output').innerHTML = 'Vous n\'êtes pas admin.'
-        document.getElementById('p_admin_output').className = 'p_grey'
-
-        document.getElementById('p_adminWait').innerHTML = 'En attente de joueur.'
-    }
+    NewVote('STATE', 'btn_startGame')
 
 })
 
@@ -84,11 +78,11 @@ socket.on('wordTurn', function(data) {
     document.getElementById('wtgPlayer').style.display = 'none';
     document.getElementById('Pendu').style.display = 'none';
     document.getElementById('wordChoose').style.display = 'block';
+    document.getElementById('span_vote_nextParty').innerHTML = ''
 
     partyEnd = false
     letterTurn = false
     document.getElementById('p_endOutput').innerHTML = ''
-    document.getElementById('bnt_nextParty').disabled = true
     AffLetters(['NONE'], ['NONE'])
     AffMistake(0)
 
@@ -135,19 +129,31 @@ socket.on('letterTurn', function(data) {
 
 socket.on('partyEnd', function(data) {
     partyEnd = true;
+    let output = document.getElementById('p_endOutput')
     AffWord(data)
     if (typeof data.id !== 'undefined' && data.id === socket.id) {
-        document.getElementById('p_endOutput').innerHTML = ''
-        document.getElementById('p_endOutput').style.color = 'green'
-        document.getElementById('p_endOutput').innerHTML = 'Vous avez Gagnez !'
+        output.innerHTML = ''
+        output.style.color = 'green'
+        output.innerHTML = 'Vous avez Gagnez !'
     } else {
-        document.getElementById('p_endOutput').innerHTML = ''
-        document.getElementById('p_endOutput').style.color = 'red'
-        document.getElementById('p_endOutput').innerHTML = 'Vous avez Perdu !'
+        output.innerHTML = ''
+        output.style.color = 'red'
+        output.innerHTML = 'Vous avez Perdu !'
     }
-    if (admin === true) {
-        document.getElementById('bnt_nextParty').disabled = false
-    }
+    document.getElementById('span_vote_nextParty').innerHTML = ''
+
+    let btn = document.createElement('button')
+    document.getElementById('span_vote_nextParty').appendChild(btn)
+    btn.id = 'bnt_nextParty'
+    btn.addEventListener('click', function() {
+        NewVote('ADD', this.id)
+    })
+    NewVote('STATE', btn.id)
+
+    let label = document.createElement('label')
+    document.getElementById('span_vote_nextParty').appendChild(label)
+    label.innerHTML = ' Voter pour la Nouvelle Partie'
+
 })
 
 socket.on('yourDead', function() {
@@ -167,8 +173,21 @@ socket.on('yourDead', function() {
     document.getElementById('aff_whoChoose').className = 'p_red'
 })
 
+socket.on('startGame', function() {
+    StartGame()
+})
+
+socket.on('nextParty', function() {
+    NextParty()
+})
+
+socket.on('infoVote', function(data) {
+    document.getElementById(data.dom).innerHTML = data.nbm_voted_player.toString() + '/' + data.nbm_player
+})
+
 function Aff_allParty_id() {
-    allParty_id.unshift(['Nom', 'Nombre de Personne', 'ID de la partie'])
+
+    //allParty_id.unshift(['Nom', 'Nombre de Personne', 'ID de la partie'])
     document.getElementById('list_allParty').innerHTML = '';
     var tbl = document.createElement('table');
     document.getElementById('list_allParty').appendChild(tbl);
@@ -179,32 +198,29 @@ function Aff_allParty_id() {
         var tr = document.createElement('tr')
         tbl.appendChild(tr)
         for (let i = 0; i < allParty_id[j].length; i++) {
-            function aff_allPartyTD() {
-                var td = document.createElement('td')
-                tr.appendChild(td)
-                if (allParty_id[j][allParty_id.length - 1] !== true) {
-                    td.className = 'cell_list_allParty'
-                } else {
-                    td.className = 'cell_list_allParty cell_Red'
-                }
+            var td = document.createElement('td')
+            tr.appendChild(td)
 
-                td.innerHTML = allParty_id[j][i];
+            td.style.padding = '10px'
+            if (i === 0) {
+                td.innerHTML = allParty_id[j][i]
+                td.style.backgroundColor = 'grey'
+                td.style.borderRadius = '20px'
+            } else if (i === 1) {
+                //css
+                td.style.cursor = 'pointer';
+                td.innerHTML = allParty_id[j][i]
+                td.style.color = 'white'
+                td.style.textDecoration = 'underline'
 
-                if (j !== 0 && allParty_id[j][allParty_id.length - 1] !== true) {
-                    td.setAttribute("onclick", function(){var row = j - 1; JoinThis(allParty_id[row][2])})
-                    td.onclick = function(){var row = j - 1; JoinThis(allParty_id[row][2])}
-                }
-            }
-            if (j === 0) {
-                aff_allPartyTD()
-            } else if (i !== allParty_id[j].length - 1) {
-                aff_allPartyTD()
+                td.setAttribute("onclick", function(){var row = j; JoinThis(allParty_id[row][2])})
+                td.onclick = function(){var row = j; JoinThis(allParty_id[row][2])}
             }
         }
     }
-    allParty_id.shift()
+    // td.setAttribute("onclick", function(){var row = j - 1; JoinThis(allParty_id[row][2])})
+    // td.onclick = function(){var row = j - 1; JoinThis(allParty_id[row][2])}
 }
-
 
 function JoinThis(id) {
     socket.emit('newuserjoin', {
@@ -221,13 +237,26 @@ function CreateParty() {
 }
 
 function StartGame() {
-    if (admin === true) {
-        socket.emit('getWordTurn', indexParty)
-    }
+    socket.emit('getWordTurn', indexParty)
 }
 
 function NewWord() {
     let word = document.getElementById('input_word_Pendu').value
+    //accent
+    for (let i = 0; i < word.length; i++) {
+
+        if (word[i] === 'é' || word[i] === 'è' || word[i] === 'ê') {
+            word = word.replaceAt(i, 'e')
+        } else if (word[i] === 'û' || word[i] === 'ù') {
+            word = word.replaceAt(i, 'u')
+        } else if (word[i] === 'ô') {
+            word = word.replaceAt(i, 'o')
+        } else if (word[i] === 'â' || word[i] === 'à') {
+            word = word.replaceAt(i, 'a')
+        }
+
+    }
+
     socket.emit('wordIs', {
         word: word,
         index: indexParty,
@@ -293,7 +322,11 @@ function AffWhoChose() {
 }
 
 function AffMistake(nbr_mistake) {
-    document.getElementById('div_mistake_AFF').style.backgroundImage = "url(" + window.location.origin + "/Pendu_img?id=" + tab_aff_pendu[nbr_mistake] + ")";
+    let div = document.getElementById('div_mistake_AFF')
+    div.innerHTML = ''
+    let img = document.createElement('img')
+    div.appendChild(img);
+    img.src = "/Pendu_img?id=" + tab_aff_pendu[nbr_mistake];
 }
 
 function NextParty() {
@@ -319,6 +352,22 @@ function SuggestWord(suggWord) {
         index: indexParty,
         id: socket.id,
         suggWord: suggWord
+    })
+}
+
+//https://www.twitch.tv/videos/395441275?t=06h50m35s
+
+
+function NewVote(type, dom) {
+
+    if (type !== 'STATE') {
+        document.getElementById(dom).disabled = true;
+    }
+
+    socket.emit('newVote', {
+        index: indexParty,
+        type: type,
+        dom: dom
     })
 }
 
